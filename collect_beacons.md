@@ -19,7 +19,19 @@ mode interface, for example wlan0 that gets associated to an AP. The monitor mod
 to capture all protocol packets on that channel, including frames from other APs.  
 
 `# ifconfig mon0 up`
-`# tcpdump -s0 -ni mon0 `
+`# tcpdump -s0 -ni mon0 ` captures all packets from the interface 
+
+`# tshark -T fields -e frame.time_epoch -e radiotap.channel.freq  -e wlan.bssid   -e wlan.ssid -e radiotap.dbm_antsignal  -s0 -ni mon0   type mgt subtype beacon` captures only beacon frames 
+
+tshark has the same syntax capture as tcpdump, but has a separate syntax for printing, and it is the one from wireshark. In the above example, we only print a few 
+fields: time, AP address and signal strength for the 
+
+`# tshark   -s0 -ni mon0  link[0] == 0x80` both tcpdump/tshark can capture based on individual bytes in the header. This byte selects only beacon frames
+
+`# tcpdump -s0 -ni mon0 -w ./saved.pcap` both tshark/tcpdump can save packets in a file that can later be inspected with tshark (or wireshark, which is more instructional for the protocol fields and print syntax)
+
+
+
 
 #### managed mode - not connected 
 
@@ -49,6 +61,9 @@ To connect a raspberry Pi, we put these lines in /etc/network/interfaces:
 
 and run `# /etc/init.d/networking restart` to get the card connected to an existing AP without password.  
 
+An alternate method if there is not another type of network manager running is to use the 
+command `# iwconfig wlan0 essid UPB-Guest` which will associate, but not obtain an IP address. 
+
 To verify that card is successfully associated, run: 
 
 `# iwconfig wlan0` should answer
@@ -77,6 +92,10 @@ The 802.11 standard mandates each AP to answer probe requests from stations that
 Therefore any station can solicit a response from any AP, without any credentials, so that a SS reading can be obtained.  
 Generally probe requests and probe responses are managed by the driver as part of the association and 
 handoff process, and usually are not available in user space. 
+
+tcpdump/tshark capture filter: 
+`# tcpdump -s0 -ni mon0 type mgt subtype probe-resp or subtype probe-req`
+
 (TODO: to be studied further)
 
 ### Packets
