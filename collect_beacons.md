@@ -3,13 +3,16 @@
 ## Methods for collecting WiFi signal strength readings under Linux 
 
 Signal strength (SS) between two devices are required for a variety of studies, measurements, or applications.  
+SS is available in each packet in monitor mode, but many cards do not support monitor mode, or it is undocumented. 
+When monitor mode is not available, some SS readings are still available to the kernel, and are accessible in user space with utilities such as `iw, iwconfig, iwlist`, 
+or directly as a reading in `proc/net/wireless`. There are several methods to gather SS, but they differ with respect to: driver availability, frequency of collection, type of packets collected, possibility to generate packets at the source. 
 
 ### Beacons 
-The 802.11 standard mandates each AP to send beacons periodically (by default every 120.4ms) with broadcast, so that any device may receive it, even if it is not associated to the AP. 
+The 802.11 standard mandates each AP to send beacons periodically (by default every 102.4ms) with broadcast, so that any device may receive it, even if it is not associated to the AP. 
 This is the easiest packet to harvest if one has access to these beacons in the driver. All drivers use these beacons internally, but may not send them up to the OS.  
 
 #### monitor mode 
-This is the preferred method to collect beacons, since the monitor mode has access to ALL packets received by the card. 
+This is the preferred method to collect beacons(or any other packets), since the monitor mode has access to ALL packets received by the card. 
 Commands should be issued as root, indicated below by the `# ` sign:
 
 `# iw phy phy0 interface add mon0 type monitor flags control otherbss`
@@ -23,14 +26,14 @@ to capture all protocol packets on that channel, including frames from other APs
 
 `# tshark -T fields -e frame.time_epoch -e radiotap.channel.freq  -e wlan.bssid   -e wlan.ssid -e radiotap.dbm_antsignal  -s0 -ni mon0   type mgt subtype beacon` captures only beacon frames 
 
-tshark has the same syntax capture as tcpdump, but has a separate syntax for printing, and it is the one from wireshark. In the above example, we only print a few 
+tshark has the same capture syntax as tcpdump, but has a separate syntax for displaying, and it is the one from wireshark. In the above example, we only print a few 
 fields: time, AP address and signal strength for the 
 
-`# tshark   -s0 -ni mon0  link[0] == 0x80` both tcpdump/tshark can capture based on individual bytes in the header. This byte selects only beacon frames
+`# tshark   -s0 -ni mon0  link[0] == 0x80` both tcpdump/tshark can capture based on individual bytes in the header. This filter selects only beacon frames.
 
 `# tcpdump -s0 -ni mon0 -w ./saved.pcap` both tshark/tcpdump can save packets in a file that can later be inspected with tshark (or wireshark, which is more instructional for the protocol fields and print syntax)
 
-
+`# tshark -T fields -e frame.time_epoch -e wlan.bssid -e radiotap.dbm_antsignal -r ./saved.pcap '(wlan.fc.type_subtype == 0x0008) && (wlan.bssid == 22:22:22:11:11:11)' use a selection filter to select beaco frames from the file, and only prints certain fields. Here we see the display filter syntax, which is also used by wireshark. Field names   
 
 
 #### managed mode - not connected 
@@ -81,7 +84,7 @@ To verify that card is successfully associated, run:
 therefore card is associated to the AP and the SS is available in user space. These values can be collected from the kernel using: 
 `while true; do  grep wlan0 /proc/net/wireless; sleep 0.1; done`
 
-For these commands we are not actually getting datapackets from the AP, but collect SS from the beacons collected.   
+For these commands we are not actually getting datapackets from the AP, but collect SS from the beacons received and reported to the kernel.   
 
 #### adhoc mode 
 
