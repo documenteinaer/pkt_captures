@@ -27,7 +27,7 @@ to capture all protocol packets on that channel, including frames from other APs
 `# tshark -T fields -e frame.time_epoch -e radiotap.channel.freq  -e wlan.bssid   -e wlan.ssid -e radiotap.dbm_antsignal  -s0 -ni mon0   type mgt subtype beacon` captures only beacon frames 
 
 tshark has the same [capture syntax](https://wiki.wireshark.org/CaptureFilters) as tcpdump, but has a separate [display syntax](https://wiki.wireshark.org/DisplayFilters), which  is the one from wireshark. In the above example, we capture beacons and only print a few 
-fields: time, AP address and signal strength for the 
+fields: time, frequency, AP address, SSID, and signal strength for the beacon.
 
 `# tshark   -s0 -ni mon0  link[0] == 0x80` both tcpdump/tshark can capture based on individual bytes in the header. This filter selects only beacon frames.
 
@@ -84,7 +84,8 @@ To verify that card is successfully associated, run:
 therefore card is associated to the AP and the SS is available in user space. These values can be collected from the kernel using: 
 `while true; do  grep wlan0 /proc/net/wireless; sleep 0.1; done`
 
-For these commands we are not actually getting datapackets from the AP, but collect SS from the beacons received and reported to the kernel.   
+For these commands we are not actually getting IP datapackets from the AP, but collect SS from the beacons received and reported to the kernel.   
+This method is convenient because it does not require setting up the IP link for the client, which involves dhcp, routing, possibly NAT, etc. 
 
 #### adhoc mode 
 
@@ -107,7 +108,7 @@ TODO:
 ### Packets
 
 If one can control two machines for the purpose of measuring SS, it is possible to generate packets at high rate (thousands of packets per second) 
-on one machine, and measure thei received SS on the other machine.   
+on one machine, and measure thei received SS on the other machine. For this method it is necessary to have IP properly set up between the AP (or a machine behind the AP) and the client. It then comes down to the question of what software can be installed on the endpoints to generate/receive traffic.   
 
 #### ping 
 
