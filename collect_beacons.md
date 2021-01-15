@@ -26,14 +26,14 @@ to capture all protocol packets on that channel, including frames from other APs
 
 `# tshark -T fields -e frame.time_epoch -e radiotap.channel.freq  -e wlan.bssid   -e wlan.ssid -e radiotap.dbm_antsignal  -s0 -ni mon0   type mgt subtype beacon` captures only beacon frames 
 
-tshark has the same capture syntax as tcpdump, but has a separate syntax for displaying, and it is the one from wireshark. In the above example, we only print a few 
+tshark has the same [capture syntax](https://wiki.wireshark.org/CaptureFilters) as tcpdump, but has a separate [display syntax](https://wiki.wireshark.org/DisplayFilters), which  is the one from wireshark. In the above example, we capture beacons and only print a few 
 fields: time, AP address and signal strength for the 
 
 `# tshark   -s0 -ni mon0  link[0] == 0x80` both tcpdump/tshark can capture based on individual bytes in the header. This filter selects only beacon frames.
 
 `# tcpdump -s0 -ni mon0 -w ./saved.pcap` both tshark/tcpdump can save packets in a file that can later be inspected with tshark (or wireshark, which is more instructional for the protocol fields and print syntax)
 
-`# tshark -T fields -e frame.time_epoch -e wlan.bssid -e radiotap.dbm_antsignal -r ./saved.pcap '(wlan.fc.type_subtype == 0x0008) && (wlan.bssid == 22:22:22:11:11:11)' use a selection filter to select beaco frames from the file, and only prints certain fields. Here we see the display filter syntax, which is also used by wireshark. Field names   
+`# tshark -T fields -e frame.time_epoch -e wlan.bssid -e radiotap.dbm_antsignal -r ./saved.pcap '(wlan.fc.type_subtype == 0x0008) && (wlan.bssid == 22:22:22:11:11:11)'` use a selection filter to select beacon frames from the file, and only prints certain fields. Here we see the display filter syntax, which is also used by wireshark.   
 
 
 #### managed mode - not connected 
@@ -99,15 +99,24 @@ handoff process, and usually are not available in user space.
 tcpdump/tshark capture filter: 
 `# tcpdump -s0 -ni mon0 type mgt subtype probe-resp or subtype probe-req`
 
-(TODO: to be studied further)
+TODO: 
+ - probe collection in Android 
+ - probe requests 
+ - scapy 
 
 ### Packets
 
 If one can control two machines for the purpose of measuring SS, it is possible to generate packets at high rate (thousands of packets per second) 
 on one machine, and measure thei received SS on the other machine.   
 
+#### ping 
+
+An easy way to generate broadcast packets is using `# ping -b`. These packets do not wait for 802.11 ACKs, and are not retried, therefore are a good candidate 
+to use as a simple probing packet. 
+
+
 #### iperf 
 
-#### 
+iperf can generate UDP traffic and has options for: packet rate, packet size, destination address. 
 
 #### monitor mode 
