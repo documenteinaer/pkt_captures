@@ -27,7 +27,7 @@ to capture all protocol packets on that channel, including frames from other APs
 `# tshark -T fields -e frame.time_epoch -e radiotap.channel.freq  -e wlan.bssid   -e wlan.ssid -e radiotap.dbm_antsignal  -s0 -ni mon0   type mgt subtype beacon` captures only beacon frames 
 
 tshark has the same [capture syntax](https://wiki.wireshark.org/CaptureFilters) as tcpdump, but has a separate [display syntax](https://wiki.wireshark.org/DisplayFilters), which  is the one from wireshark. In the above example, we capture beacons and only print a few 
-fields: time, frequency, AP address, SSID, and signal strength for the beacon.
+fields: time, frequency, AP address, SSID, and signal strength for the beacon. More [802.11 capture options](https://wifinigel.blogspot.com/2018/04/wireshark-capture-filters-for-80211.html).  
 
 `# tshark   -s0 -ni mon0  link[0] == 0x80` both tcpdump/tshark can capture based on individual bytes in the header. This filter selects only beacon frames.
 
@@ -35,6 +35,7 @@ fields: time, frequency, AP address, SSID, and signal strength for the beacon.
 
 `# tshark -T fields -e frame.time_epoch -e wlan.bssid -e radiotap.dbm_antsignal -r ./saved.pcap '(wlan.fc.type_subtype == 0x0008) && (wlan.bssid == 22:22:22:11:11:11)'` use a selection filter to select beacon frames from the file, and only prints certain fields. Here we see the display filter syntax, which is also used by wireshark.   
 
+Raspberry PIs unfortunately do nos support monitor mode out of the box, as they rely on Broadcom chipsets :-(. There seems to be a way to patch the kernel to allow for [monitor mode on the Pi](https://github.com/seemoo-lab/nexmon).    
 
 #### managed mode - not connected 
 
@@ -71,7 +72,7 @@ To verify that card is successfully associated, run:
 
 `# iwconfig wlan0` should answer
 
-    wlan0     IEEE 802.11  ESSID:"UPB-Guest"  
+    wlan0 IEEE 802.11  ESSID:"UPB-Guest"  
           Mode:Managed  Frequency:2.457 GHz  Access Point: AA:AA:AA:EE:EE:EE  
           Bit Rate=24 Mb/s   Tx-Power=31 dBm  
           Retry short limit:7   RTS thr:off   Fragment thr:off
