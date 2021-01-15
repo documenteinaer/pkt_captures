@@ -1,6 +1,6 @@
 
 
-## Methods for collecting WiFi signal strength readings under Linux 
+## Methods for collecting WiFi signal strength readings 
 
 Signal strength (SS) between two devices are required for a variety of studies, measurements, or applications.  
 SS is available in each packet in monitor mode, but many cards do not support monitor mode, or it is undocumented. 
@@ -36,6 +36,18 @@ fields: time, frequency, AP address, SSID, and signal strength for the beacon. M
 `# tshark -T fields -e frame.time_epoch -e wlan.bssid -e radiotap.dbm_antsignal -r ./saved.pcap '(wlan.fc.type_subtype == 0x0008) && (wlan.bssid == 22:22:22:11:11:11)'` use a selection filter to select beacon frames from the file, and only prints certain fields. Here we see the display filter syntax, which is also used by wireshark.   
 
 Raspberry PIs unfortunately do nos support monitor mode out of the box, as they rely on Broadcom chipsets :-(. There seems to be a way to patch the kernel to allow for [monitor mode on the Pi](https://github.com/seemoo-lab/nexmon).    
+
+#### monitor mode in OSX 
+
+OSX comes with an utility that provides more functionality than just scanning: 
+`# ln -s /System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport /usr/local/bin/airport` is the hidden utility.   
+
+`# airport en1 sniff 1` sniffs channel 1 to a .pcap ile in /tmp 
+
+Regular monitor mode is also available with -I switch: 
+`# tshark -Ini en1 type mgt subtype beacon` - just like Linux monitor mode.  
+
+GUI: hold alt when clicking the wifi icon, choose 'Open Wireless Diagnostics', then in Window menu choose 'Sniffer' - will create a .wcap file on the desktop that can be read by tshark.    
 
 #### managed mode - not connected 
 
