@@ -21,23 +21,39 @@ to capture all protocol packets on that channel, including frames from other APs
 `# ifconfig mon0 up`
 `# tcpdump -s0 -ni mon0 `
 
-#### managed mode 
+#### managed mode - not connected 
 
 The next commands work without having to be connected to an AP, but they perform a complete scan, therefore take a few seconds (2.5s on a raspberry PI, Broadcom card; 4.5s on Intel 6300 Ultimate-n). 
 
 `# iw dev wlan0 scan | egrep -B2 '(SSID|freq)' `
 
-obtains SSID, frequency, and SS, but command may take 5 secodns, as it cycles through all channels
+obtains SSID, frequency, and SS, but command may take 5 seconds, as it cycles through all channels
 
 `# iwlist scan | egrep -B3 SSID`
 
 similar 
 
+#### managed mode - connected 
+
 When conected to an existing AP, it is possible to obtain some SS readings from the driver, albeit not 10 readings per second.  
+
+To connect a raspberry Pi, we put these lines in /etc/network/interfaces:
+
+    auto wlan0
+    iface wlan0 inet dhcp
+    #  address 10.2.0.2
+    #  netmask 255.255.255.0
+    #  wireless-channel 6
+    wireless-essid UPB-Guest
+    wireless-mode managed
+
+and run `# /etc/init.d/networking restart` to get the card connected to an existing AP without password.  
+
+To verify that card is successfully associated, run: 
 
 `# iwconfig wlan0` should answer
 
-    wlan0     IEEE 802.11  ESSID:"Precis-Guest"  
+    wlan0     IEEE 802.11  ESSID:"UPB-Guest"  
           Mode:Managed  Frequency:2.457 GHz  Access Point: AA:AA:AA:EE:EE:EE  
           Bit Rate=24 Mb/s   Tx-Power=31 dBm  
           Retry short limit:7   RTS thr:off   Fragment thr:off
@@ -50,8 +66,11 @@ When conected to an existing AP, it is possible to obtain some SS readings from 
 therefore card is associated to the AP and the SS is available in user space. These values can be collected from the kernel using: 
 `while true; do  grep wlan0 /proc/net/wireless; sleep 0.1; done`
 
+For these commands we are not actually getting datapackets from the AP, but collect SS from the beacons collected.   
 
 #### adhoc mode 
+
+TODO 
 
 ### Probes 
 The 802.11 standard mandates each AP to answer probe requests from stations that are not yet associated. 
@@ -63,6 +82,10 @@ handoff process, and usually are not available in user space.
 ### Packets
 
 If one can control two machines for the purpose of measuring SS, it is possible to generate packets at high rate (thousands of packets per second) 
-on one machine, and measure thei received SS on the other machine  
+on one machine, and measure thei received SS on the other machine.   
+
+#### iperf 
+
+#### 
 
 #### monitor mode 
