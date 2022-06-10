@@ -18,7 +18,9 @@ i = 0
 
 # Colț 0 - Început latură 1
 json_corner = open(os.path.join(json_dir, "linux_etaj0_dir0_pos0_colt0.json"))
-collections["collection"+str(i)] = json.load(json_corner)["collection0"]
+col = json.load(json_corner)["collection0"]
+col['z'] = 86.5
+collections["collection"+str(i)] = col
 i+=1
 
 
@@ -34,6 +36,7 @@ for it in range(1,13):
     collection = json.load(json_file)
     collection["collection0"]["x"] = x_start
     collection["collection0"]["y"] = y_start + it * (y_end - y_start) / 13
+    collection["collection0"]["z"] = 86.5
 
     # Add to collections 
     collections["collection"+str(i)] = collection["collection0"]
@@ -42,13 +45,17 @@ for it in range(1,13):
 
 # Colț 1 - Final Latură 1
 json_corner = open(os.path.join(json_dir, "linux_etaj0_dir0_pos13_colt1.json"))
-collections["collection"+str(i)] = json.load(json_corner)["collection0"]
+col = json.load(json_corner)["collection0"]
+col['z'] = 86.5
+collections["collection"+str(i)] = col
 i+=1
 
 
 # Colț 1 - Început latură 2
 json_corner = open(os.path.join(json_dir, "linux_etaj0_dir1_pos14_colt1.json"))
-collections["collection"+str(i)] = json.load(json_corner)["collection0"]
+col = json.load(json_corner)["collection0"]
+col['z'] = 86.5
+collections["collection"+str(i)] = col
 i+=1
 
 
@@ -64,6 +71,7 @@ for it in range(15,28):
     collection = json.load(json_file)
     collection["collection0"]["y"] = y_start
     collection["collection0"]["x"] = x_start + (it-14) * (x_end - x_start) / 14
+    collection["collection0"]["z"] = 86.5
 
     # Add to collections 
     collections["collection"+str(i)] = collection["collection0"]
@@ -72,13 +80,17 @@ for it in range(15,28):
 
 # Colț 2 - Final latură 2
 json_corner = open(os.path.join(json_dir, "linux_etaj0_dir1_pos28_colt2.json"))
-collections["collection"+str(i)] = json.load(json_corner)["collection0"]
+col = json.load(json_corner)["collection0"]
+col['z'] = 86.5
+collections["collection"+str(i)] = col
 i+=1
 
 
 # Colț 2 - Început latură 3
 json_corner = open(os.path.join(json_dir, "linux_etaj0_dir2_pos29_colt2.json"))
-collections["collection"+str(i)] = json.load(json_corner)["collection0"]
+col = json.load(json_corner)["collection0"]
+col['z'] = 86.5
+collections["collection"+str(i)] = col
 i+=1
 
 
@@ -94,6 +106,7 @@ for it in range(30,43):
     collection = json.load(json_file)
     collection["collection0"]["x"] = x_start
     collection["collection0"]["y"] = y_start + (it-29) * (y_end - y_start) / 14
+    collection["collection0"]["z"] = 86.5
 
     # Add to collections 
     collections["collection"+str(i)] = collection["collection0"]
@@ -102,14 +115,18 @@ for it in range(30,43):
 
 # Colț 3 - Final latură 3
 json_corner = open(os.path.join(json_dir, "linux_etaj0_dir2_pos43_colt3.json"))
-collections["collection"+str(i)] = json.load(json_corner)["collection0"]
+col = json.load(json_corner)["collection0"]
+col['z'] = 86.5
+collections["collection"+str(i)] = col
 i+=1
 
 
 
 # Colț 3 - Început latură 4
 json_corner = open(os.path.join(json_dir, "linux_etaj0_dir3_pos44_colt3.json"))
-collections["collection"+str(i)] = json.load(json_corner)["collection0"]
+col = json.load(json_corner)["collection0"]
+col['z'] = 86.5
+collections["collection"+str(i)] = col
 i+=1
 
 
@@ -125,6 +142,7 @@ for it in range(45,59):
     collection = json.load(json_file)
     collection["collection0"]["y"] = y_start
     collection["collection0"]["x"] = x_start + (it-44) * (x_end - x_start) / 15
+    collection["collection0"]["z"] = 86.5
 
     # Add to collections 
     collections["collection"+str(i)] = collection["collection0"]
@@ -133,7 +151,9 @@ for it in range(45,59):
 
 # Colț 0 - Final latură 4
 json_corner = open(os.path.join(json_dir, "linux_etaj0_dir3_pos59_colt0.json"))
-collections["collection"+str(i)] = json.load(json_corner)["collection0"]
+col = json.load(json_corner)["collection0"]
+col['z'] = 86.5
+collections["collection"+str(i)] = col
 i+=1
 
 
